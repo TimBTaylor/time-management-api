@@ -1,12 +1,11 @@
 require("dotenv").config();
 
-const mysql = require("mysql");
 const express = require("express");
 const session = require("express-session");
 const passport = require("passport");
 const userRouter = require("./routes/users");
 const cors = require("cors");
-const googleLogIn = require("./");
+require("./auth");
 
 function isLoggedIn(req, res, next) {
   req.user ? next() : res.sendStatus(401);
@@ -29,36 +28,50 @@ app.use(
 
 app.use("/user", userRouter);
 
-const db = mysql.createConnection({
-  host: "timemanagement.cf3y6mmaym1u.us-east-1.rds.amazonaws.com",
-  port: "3306",
-  user: "admin",
-  password: "Ylugi384",
-  database: "my_time_management",
-});
-
-db.connect((err) => {
-  if (err) {
-    console.log(err);
-    return;
-  } else {
-    console.log("database connected");
-  }
-});
-
 app.get("/", (req, res) => {
-  res.send('<a href="/auth/google">Authenticate with google</a>');
+  res.send('<a href="/auth/google/admin">Authenticate with google</a>');
 });
 
+// user sign in
 app.get(
   "/auth/google",
   passport.authenticate("google", { scope: ["email", "profile"] })
 );
 
+//create admin
+app.post(
+  "/auth/google/admin",
+  passport.authenticate("google-create-admin", { scope: ["email", "profile"] })
+);
+
+//create employee
+app.post(
+  "/auth/google/employee",
+  passport.authenticate("google-create-employee", {
+    scope: ["email", "profile"],
+  })
+);
+
 app.get(
   "/google/callback",
   passport.authenticate("google", {
-    successRedirect: "/protected",
+    successRedirect: "/user/protected",
+    failureRedirect: "auth/failure",
+  })
+);
+
+app.get(
+  "/google/callback/create-employee",
+  passport.authenticate("google-create-employee", {
+    successRedirect: "/user/protected",
+    failureRedirect: "auth/failure",
+  })
+);
+
+app.get(
+  "/google/callback/create-admin",
+  passport.authenticate("google-create-admin", {
+    successRedirect: "/user/protected",
     failureRedirect: "auth/failure",
   })
 );
@@ -69,6 +82,7 @@ app.get("/auth/failure", (req, res) => {
 
 app.get("/protected", isLoggedIn, (req, res) => {
   res.send("Hello" + req.user.name.givenName);
+  console.log(req.user);
 });
 
 app.get("/logout", (req, res) => {
