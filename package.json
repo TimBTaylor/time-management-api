@@ -17,7 +17,8 @@
     "mysql": "^2.18.1",
     "passport": "^0.5.0",
     "passport-google-oauth2": "^0.2.0",
-    "passport-google-oauth20": "^2.0.0"
+    "passport-google-oauth20": "^2.0.0",
+    "sync-sql": "^1.0.2"
   },
   "devDependencies": {
     "dotenv": "^10.0.0",

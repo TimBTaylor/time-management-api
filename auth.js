@@ -10,7 +10,7 @@ passport.use(
       clientID:
         "322422677461-6nlclaik5vcgvhu8l4eb2oik99jm4a8c.apps.googleusercontent.com",
       clientSecret: "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",
-      callbackURL: "http://localhost:3001/google/callback",
+      callbackURL: "http://localhost:3001/user/google/callback",
     },
     function (accessToken, refreshToken, profile, done) {
       return done(null, profile);
@@ -26,7 +26,7 @@ passport.use(
       clientID:
         "322422677461-pf3q7g6ogdk5ia3ns7ss999vkrmss4sl.apps.googleusercontent.com",
       clientSecret: "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",
-      callbackURL: "http://localhost:3001/google/callback/create-admin",
+      callbackURL: "http://localhost:3001/user/google/callback/create-admin",
     },
     function (accessToken, refreshToken, profile, done) {
       return done(null, profile);
