@@ -18,7 +18,7 @@ router.get(
       (err, result) => {
         if (err) {
           // return error from database request
-          return res.status(500).json({ message: err });
+          return res.status(500).json(err.sqlMessage);
         } else {
           if (result.length > 0) {
             //returning the current user
@@ -36,22 +36,22 @@ router.get(
               (err, result) => {
                 if (err) {
                   // return error from database request
-                  return res.status(500).json({ message: err });
+                  return res.status(500).json(err.sqlMessage);
                 } else {
-                  // retrieves all employees including new employee
-                  db.query(
-                    `SELECT * FROM Employees WHERE email = "${req.user._json.email}"`,
-                    (err, result) => {
-                      if (err) {
-                        // return error from database request
-                        return res.status(500).json({ message: err });
-                      } else {
-                        if (result.length > 0) {
-                          return res.json(result[0]);
+                  if (result.affectedRows == 1) {
+                    db.query(
+                      `SELECT * FROM Employees WHERE email = "${req.user._json.email}"`,
+                      (err, result) => {
+                        if (err) {
+                          return res.status(500).json(err.sqlMessage);
+                        } else {
+                          return res.status(201).json(result[0]);
                         }
                       }
-                    }
-                  );
+                    );
+                  } else {
+                    return res.status(400).json("Employee not created");
+                  }
                 }
               }
             );
@@ -74,7 +74,7 @@ router.get(
       `SELECT * FROM Admins WHERE email = "${req.user._json.email}" UNION ALL SELECT * FROM Employees WHERE email = "${req.user._json.email}"`,
       (err, result) => {
         if (err) {
-          res.status(500).json({ message: err });
+          res.status(500).json(err.sqlMessage);
         } else {
           let isUser = false;
           let isAdmin = false;
@@ -88,7 +88,7 @@ router.get(
           }
           // checks if current email is already registered
           if (isUser) {
-            return res.json({ isUser, isAdmin, email });
+            return res.status(201).json({ isUser, isAdmin, email });
           } else {
             // inserts new users information into Admins database
             db.query(
@@ -101,19 +101,22 @@ router.get(
               ],
               (err, result) => {
                 if (err) {
-                  return res.status(500).json({ message: err });
+                  return res.status(500).json(err.sqlMessage);
                 } else {
-                  // retrieves the newly added admin information
-                  db.query(
-                    `SELECT * FROM Admins WHERE email = "${req.user._json.email}"`,
-                    (err, result) => {
-                      if (err) {
-                        return res.status(500).json({ message: err });
-                      } else {
-                        return res.json(result[0]);
+                  if (result.affectedRows == 1) {
+                    db.query(
+                      `SELECT * FROM Admins WHERE email = "${req.user._json.email}"`,
+                      (err, result) => {
+                        if (err) {
+                          return res.status(500).json(err.sqlMessage);
+                        } else {
+                          return res.status(201).json(result[0]);
+                        }
                       }
-                    }
-                  );
+                    );
+                  } else {
+                    return res.status(400).json("Admin not created");
+                  }
                 }
               }
             );
@@ -133,10 +136,8 @@ router.put("/update-company", (req, res) => {
   db.query(
     `SELECT * FROM Companies WHERE company_number = ${newCompanyNumber}`,
     (err, result) => {
-      console.log(result);
-      console.log("result from new company");
       if (err) {
-        return res.status(500).json({ message: err });
+        return res.status(500).json(err.sqlMessage);
       } else {
         if (result.length > 0) {
           // if a valid company then updates users company
@@ -144,14 +145,14 @@ router.put("/update-company", (req, res) => {
             `UPDATE ${tableName} SET company_number = ${newCompanyNumber} WHERE email = "${email}"`,
             (err, result) => {
               if (err) {
-                return res.status(500).json({ message: err });
+                return res.status(500).json(err.sqlMessage);
               } else {
-                return res.json("Users company updated");
+                return res.status(200).json("Users company updated");
               }
             }
           );
         } else {
-          return res.json("Not a company");
+          return res.status(400).json("Not a company");
         }
       }
     }
@@ -159,6 +160,58 @@ router.put("/update-company", (req, res) => {
 });
 
 // update admin status
-router.put("/update-admin-status", (req, res) => {});
+router.put("/update-admin-status", (req, res) => {
+  const first_name = req.body.first_name;
+  const last_name = req.body.last_name;
+  const email = req.body.email;
+  const date = req.body.date;
+  const profile_image = req.body.profile_image;
+  const company_number = req.body.company_number;
+  db.query(`DELETE FROM Employees WHERE email = "${email}"`, (err, result) => {
+    if (err) {
+      return res.status(500).json(err.sqlMessage);
+    } else {
+      if (result.affectedRows == 1) {
+        db.query(
+          `INSERT INTO Admins (first_name, last_name, email, is_admin, date, profile_image, company_number) VALUES (?, ?, ?, 1, ?, ?, ?)`,
+          [first_name, last_name, email, date, profile_image, company_number],
+          (err, result) => {
+            if (err) {
+              return res.status(500).json(err.sqlMessage);
+            } else {
+              return res
+                .status(201)
+                .json(`${first_name} ${last_name} is now an Admin`);
+            }
+          }
+        );
+      } else {
+        return res.status(400).json("Not valid email");
+      }
+    }
+  });
+});
+
+//delete account
+router.delete("/delete-account", (req, res) => {
+  const email = req.body.email;
+  const accountType = req.body.accountType;
+  db.query(
+    `DELETE FROM ${accountType} WHERE email = "${email}"`,
+    (err, result) => {
+      if (err) {
+        return res.status(500).json(err.sqlMessage);
+      } else {
+        return res.status(200).json(`${email} deleted`);
+      }
+    }
+  );
+});
+
+//logout of account
+router.get("/logout", (req, res) => {
+  req.logout();
+  req.session.destroy();
+});
 
 module.exports = router;

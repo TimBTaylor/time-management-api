@@ -4,6 +4,8 @@ const express = require("express");
 const session = require("express-session");
 const passport = require("passport");
 const userRouter = require("./routes/users");
+const companyRouter = require("./routes/company");
+const jobRouter = require("./routes/jobs");
 const cors = require("cors");
 const db = require("./db");
 require("./auth");
@@ -28,6 +30,10 @@ app.use(
 );
 
 app.use("/user", userRouter);
+
+app.use("/company", companyRouter);
+
+app.use("/jobs", jobRouter);
 
 app.get("/", (req, res) => {
   res.send('<a href="/auth/google/admin">Authenticate with google</a>');
