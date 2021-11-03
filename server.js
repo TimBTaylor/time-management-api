@@ -6,13 +6,10 @@ const passport = require("passport");
 const userRouter = require("./routes/users");
 const companyRouter = require("./routes/company");
 const jobRouter = require("./routes/jobs");
+const timeRouter = require("./routes/time");
 const cors = require("cors");
 const db = require("./db");
 require("./auth");
-
-function isLoggedIn(req, res, next) {
-  req.user ? next() : res.sendStatus(401);
-}
 
 const app = express();
 
@@ -35,8 +32,10 @@ app.use("/company", companyRouter);
 
 app.use("/jobs", jobRouter);
 
+app.use("/time", timeRouter);
+
 app.get("/", (req, res) => {
-  res.send('<a href="/auth/google/admin">Authenticate with google</a>');
+  res.send('<a href="/auth/google">Authenticate with google</a>');
 });
 
 // user sign in and or create employee account
@@ -50,32 +49,6 @@ app.get(
   "/auth/google/admin",
   passport.authenticate("google-create-admin", { scope: ["email", "profile"] })
 );
-
-app.get(
-  "/google/callback/create-admin",
-  passport.authenticate("google-create-admin", {
-    successRedirect: "/user/admin-created",
-    failureRedirect: "auth/failure",
-  })
-);
-
-app.get("/auth/failure", (req, res) => {
-  res.send("Something went wrong");
-});
-
-app.get("/protected", isLoggedIn, (req, res) => {
-  res.send("Hello" + req.user.name.givenName);
-  console.log(req.user);
-});
-
-app.get("/logout", (req, res) => {
-  req.logout();
-  req.session.destroy();
-});
-
-app.get("/random", isLoggedIn, (req, res) => {
-  res.send(req.user.displayName);
-});
 
 app.listen(3001, () => {
   console.log("Server running on port 3001");

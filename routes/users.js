@@ -28,8 +28,8 @@ router.get(
             db.query(
               "INSERT INTO Employees (first_name, last_name, email, is_admin, date, profile_image) VALUES (?, ?, ?, 0, CURDATE(), ?)",
               [
-                req.user.name.familyName,
                 req.user.name.givenName,
+                req.user.name.familyName,
                 req.user._json.email,
                 req.user._json.picture,
               ],
@@ -94,8 +94,8 @@ router.get(
             db.query(
               "INSERT INTO Admins (first_name, last_name, email, is_admin, date, profile_image) VALUES (?, ?, ?, 1, CURDATE(), ?)",
               [
-                req.user.name.familyName,
                 req.user.name.givenName,
+                req.user.name.familyName,
                 req.user._json.email,
                 req.user._json.picture,
               ],

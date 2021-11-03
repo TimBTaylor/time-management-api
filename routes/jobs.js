@@ -2,7 +2,7 @@ const db = require("../db");
 const express = require("express");
 const router = express.Router();
 
-// delete new job
+// create new job
 router.post("/new-job", (req, res) => {
   const company_number = req.body.company_number;
   const job_name = req.body.job_name;
