@@ -4,12 +4,13 @@ const router = express.Router();
 
 // add company request
 router.post("/new-company", (req, res) => {
-  const company_name = req.body.company_name;
-  const admin_email = req.body.admin_email;
-  const company_number = req.body.company_number;
+  const companyName = req.body.companyName;
+  const adminEmail = req.body.adminEmail;
+  const companyNumber = req.body.companyNumber;
+  const todayDate = new Date().toISOString().slice(0, 10);
   db.query(
-    "INSERT INTO Companies (company_name, date, admin_email, company_number) VALUES (?, CURDATE(), ?, ?)",
-    [company_name, admin_email, company_number],
+    "INSERT INTO Companies (company_name, date, admin_email, company_number) VALUES (?, ?, ?, ?)",
+    [companyName, adminEmail, todayDate, companyNumber],
     (err, result) => {
       if (err) {
         return res.status(500).json(err.sqlMessage);

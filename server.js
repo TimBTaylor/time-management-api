@@ -8,7 +8,6 @@ const companyRouter = require("./routes/company");
 const jobRouter = require("./routes/jobs");
 const timeRouter = require("./routes/time");
 const cors = require("cors");
-const db = require("./db");
 require("./auth");
 
 const app = express();

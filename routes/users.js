@@ -24,13 +24,15 @@ router.get(
             //returning the current user
             return res.json(result[0]);
           } else {
+            const todayDate = new Date().toISOString().slice(0, 10);
             // inserts new employee
             db.query(
-              "INSERT INTO Employees (first_name, last_name, email, is_admin, date, profile_image) VALUES (?, ?, ?, 0, CURDATE(), ?)",
+              "INSERT INTO Employees (first_name, last_name, email, is_admin, date, profile_image) VALUES (?, ?, ?, 0, ?, ?)",
               [
                 req.user.name.givenName,
                 req.user.name.familyName,
                 req.user._json.email,
+                todayDate,
                 req.user._json.picture,
               ],
               (err, result) => {
@@ -90,13 +92,15 @@ router.get(
           if (isUser) {
             return res.status(201).json({ isUser, isAdmin, email });
           } else {
+            const todayDate = new Date().toISOString().slice(0, 10);
             // inserts new users information into Admins database
             db.query(
-              "INSERT INTO Admins (first_name, last_name, email, is_admin, date, profile_image) VALUES (?, ?, ?, 1, CURDATE(), ?)",
+              "INSERT INTO Admins (first_name, last_name, email, is_admin, date, profile_image) VALUES (?, ?, ?, 1, ?, ?)",
               [
                 req.user.name.givenName,
                 req.user.name.familyName,
                 req.user._json.email,
+                todayDate,
                 req.user._json.picture,
               ],
               (err, result) => {
@@ -161,12 +165,12 @@ router.put("/update-company", (req, res) => {
 
 // update admin status
 router.put("/update-admin-status", (req, res) => {
-  const first_name = req.body.first_name;
-  const last_name = req.body.last_name;
+  const firstName = req.body.firstName;
+  const lastName = req.body.lastName;
   const email = req.body.email;
   const date = req.body.date;
-  const profile_image = req.body.profile_image;
-  const company_number = req.body.company_number;
+  const profileImage = req.body.profileImage;
+  const companyNumber = req.body.companyNumber;
   db.query(`DELETE FROM Employees WHERE email = "${email}"`, (err, result) => {
     if (err) {
       return res.status(500).json(err.sqlMessage);
@@ -174,14 +178,14 @@ router.put("/update-admin-status", (req, res) => {
       if (result.affectedRows == 1) {
         db.query(
           `INSERT INTO Admins (first_name, last_name, email, is_admin, date, profile_image, company_number) VALUES (?, ?, ?, 1, ?, ?, ?)`,
-          [first_name, last_name, email, date, profile_image, company_number],
+          [firstName, lastName, email, date, profileImage, companyNumber],
           (err, result) => {
             if (err) {
               return res.status(500).json(err.sqlMessage);
             } else {
               return res
                 .status(201)
-                .json(`${first_name} ${last_name} is now an Admin`);
+                .json(`${firstName} ${lastName} is now an Admin`);
             }
           }
         );

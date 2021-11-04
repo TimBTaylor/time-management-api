@@ -4,14 +4,14 @@ const router = express.Router();
 
 // create new job
 router.post("/new-job", (req, res) => {
-  const company_number = req.body.company_number;
-  const job_name = req.body.job_name;
-  const job_po = req.body.job_po;
-  const job_for = req.body.job_for;
+  const companyNumber = req.body.companyNumber;
+  const jobName = req.body.jobName;
+  const jobPo = req.body.jobPo;
+  const jobFor = req.body.jobFor;
   const comments = req.body.comments;
   db.query(
     "INSERT INTO Jobs (job_name, job_po, job_for, comments, company_number) VALUES (?, ?, ?, ?, ?)",
-    [job_name, job_po, job_for, comments, company_number],
+    [jobName, jobPo, jobFor, comments, companyNumber],
     (err, result) => {
       if (err) {
         return res.status(500).json(err.sqlMessage);
@@ -24,10 +24,10 @@ router.post("/new-job", (req, res) => {
 
 // delete job
 router.delete("/delete-job", (req, res) => {
-  const job_name = req.body.job_name;
-  const job_po = req.body.job_po;
+  const jobName = req.body.jobName;
+  const jobPo = req.body.jobPo;
   db.query(
-    `DELETE FROM Jobs WHERE job_name = "${job_name}" AND job_po = "${job_po}"`,
+    `DELETE FROM Jobs WHERE job_name = "${jobName}" AND job_po = "${jobPo}"`,
     (err, result) => {
       if (err) {
         return res.status(500).json(err.sqlMessage);
