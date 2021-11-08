@@ -37,6 +37,10 @@ app.get("/", (req, res) => {
   res.send('<a href="/auth/google">Authenticate with google</a>');
 });
 
+app.get("/healthcheck", (req, res) => {
+  return res.status(200);
+});
+
 // user sign in and or create employee account
 app.get(
   "/auth/google",
