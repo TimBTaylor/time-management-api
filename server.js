@@ -34,7 +34,7 @@ app.use("/jobs", jobRouter);
 app.use("/time", timeRouter);
 
 app.get("/", (req, res) => {
-  res.send('<a href="/auth/google">Authenticate with google</a>');
+  return res.status(200);
 });
 
 app.get("/healthcheck", (req, res) => {
