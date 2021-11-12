@@ -220,7 +220,7 @@ router.get("/logout", (req, res) => {
 
 //new routes
 
-router.get("/auth", function (req, res) {
+router.get("/auth/login", function (req, res) {
   // retieves current user from database
   db.query(
     `SELECT * FROM Admins WHERE email = "${req.body.email}" UNION ALL SELECT * FROM Employees WHERE email = "${req.body.email}"`,
