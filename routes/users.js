@@ -14,7 +14,7 @@ router.get(
   function (req, res) {
     // retieves current user from database
     db.query(
-      `SELECT * FROM Admins WHERE email = "${req.user._json.email}" UNION ALL SELECT * FROM Employees WHERE email = "${req.user._json.email}"`,
+      `SELECT * FROM Admins WHERE email = "${req.body.email}" UNION ALL SELECT * FROM Employees WHERE email = "${req.body.email}"`,
       (err, result) => {
         if (err) {
           // return error from database request
@@ -29,11 +29,11 @@ router.get(
             db.query(
               "INSERT INTO Employees (first_name, last_name, email, is_admin, date, profile_image) VALUES (?, ?, ?, 0, ?, ?)",
               [
-                req.user.name.givenName,
-                req.user.name.familyName,
-                req.user._json.email,
+                req.body.givenName,
+                req.body.familyName,
+                req.body.email,
                 todayDate,
-                req.user._json.picture,
+                req.body.picture,
               ],
               (err, result) => {
                 if (err) {
@@ -42,7 +42,7 @@ router.get(
                 } else {
                   if (result.affectedRows == 1) {
                     db.query(
-                      `SELECT * FROM Employees WHERE email = "${req.user._json.email}"`,
+                      `SELECT * FROM Employees WHERE email = "${req.body.email}"`,
                       (err, result) => {
                         if (err) {
                           return res.status(500).json(err.sqlMessage);
@@ -73,7 +73,7 @@ router.get(
   (req, res) => {
     // retrieves users from admins and employee table where email is the current users email
     db.query(
-      `SELECT * FROM Admins WHERE email = "${req.user._json.email}" UNION ALL SELECT * FROM Employees WHERE email = "${req.user._json.email}"`,
+      `SELECT * FROM Admins WHERE email = "${req.body.email}" UNION ALL SELECT * FROM Employees WHERE email = "${req.body.email}"`,
       (err, result) => {
         if (err) {
           res.status(500).json(err.sqlMessage);
@@ -83,7 +83,7 @@ router.get(
           let email;
           if (result.length > 0) {
             isUser = true;
-            email = req.user._json.email;
+            email = req.body.email;
             if (result[0].is_admin === 1) {
               isAdmin = true;
             }
@@ -97,11 +97,11 @@ router.get(
             db.query(
               "INSERT INTO Admins (first_name, last_name, email, is_admin, date, profile_image) VALUES (?, ?, ?, 1, ?, ?)",
               [
-                req.user.name.givenName,
-                req.user.name.familyName,
-                req.user._json.email,
+                req.body.givenName,
+                req.body.familyName,
+                req.body.email,
                 todayDate,
-                req.user._json.picture,
+                req.body.picture,
               ],
               (err, result) => {
                 if (err) {
@@ -109,7 +109,7 @@ router.get(
                 } else {
                   if (result.affectedRows == 1) {
                     db.query(
-                      `SELECT * FROM Admins WHERE email = "${req.user._json.email}"`,
+                      `SELECT * FROM Admins WHERE email = "${req.body.email}"`,
                       (err, result) => {
                         if (err) {
                           return res.status(500).json(err.sqlMessage);
@@ -216,6 +216,60 @@ router.delete("/delete-account", (req, res) => {
 router.get("/logout", (req, res) => {
   req.logout();
   req.session.destroy();
+});
+
+//new routes
+
+router.get("/auth", function (req, res) {
+  // retieves current user from database
+  db.query(
+    `SELECT * FROM Admins WHERE email = "${req.body.email}" UNION ALL SELECT * FROM Employees WHERE email = "${req.body.email}"`,
+    (err, result) => {
+      if (err) {
+        // return error from database request
+        return res.status(500).json(err.sqlMessage);
+      } else {
+        if (result.length > 0) {
+          //returning the current user
+          return res.json(result[0]);
+        } else {
+          const todayDate = new Date().toISOString().slice(0, 10);
+          // inserts new employee
+          db.query(
+            "INSERT INTO Employees (first_name, last_name, email, is_admin, date, profile_image) VALUES (?, ?, ?, 0, ?, ?)",
+            [
+              req.body.givenName,
+              req.body.familyName,
+              req.body.email,
+              todayDate,
+              req.body.picture,
+            ],
+            (err, result) => {
+              if (err) {
+                // return error from database request
+                return res.status(500).json(err.sqlMessage);
+              } else {
+                if (result.affectedRows == 1) {
+                  db.query(
+                    `SELECT * FROM Employees WHERE email = "${req.body.email}"`,
+                    (err, result) => {
+                      if (err) {
+                        return res.status(500).json(err.sqlMessage);
+                      } else {
+                        return res.status(201).json(result[0]);
+                      }
+                    }
+                  );
+                } else {
+                  return res.status(400).json("Employee not created");
+                }
+              }
+            }
+          );
+        }
+      }
+    }
+  );
 });
 
 module.exports = router;
