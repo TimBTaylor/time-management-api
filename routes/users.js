@@ -227,7 +227,7 @@ router.get("/auth/login", function (req, res) {
     (err, result) => {
       if (err) {
         // return error from database request
-        return res.status(500).json(err.sqlMessage + req.body + "here");
+        return res.status(500).json(err.sqlMessage);
       } else {
         if (result.length > 0) {
           //returning the current user
@@ -247,18 +247,14 @@ router.get("/auth/login", function (req, res) {
             (err, result) => {
               if (err) {
                 // return error from database request
-                return res
-                  .status(500)
-                  .json(err.sqlMessage + req.body + "here2");
+                return res.status(500).json(err.sqlMessage);
               } else {
                 if (result.affectedRows == 1) {
                   db.query(
                     `SELECT * FROM Employees WHERE email = "${req.body.email}"`,
                     (err, result) => {
                       if (err) {
-                        return res
-                          .status(500)
-                          .json(err.sqlMessage + req.body + "here3");
+                        return res.status(500).json(err.sqlMessage);
                       } else {
                         return res.status(201).json(result[0]);
                       }
