@@ -22,7 +22,7 @@ db.connect((err) => {
 });
 
 function reconnect(db) {
-  if (db) db.destory();
+  if (db) db.end();
   const connection = mysql.createConnection(db_config);
 
   connection.connect(function (err) {
