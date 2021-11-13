@@ -220,11 +220,10 @@ router.get("/logout", (req, res) => {
 
 //new routes
 
-router.get("/auth/login", function (req, res) {
+router.get("/auth/login", async (req, res) => {
   // retieves current user from database
   try {
-    db.connect();
-    db.query(
+    await db.query(
       `SELECT * FROM Admins WHERE email = "${req.body.email}" UNION ALL SELECT * FROM Employees WHERE email = "${req.body.email}"`,
       (err, result) => {
         if (err) {
@@ -291,8 +290,8 @@ router.get("/all-admins", (req, res) => {
   });
 });
 
-router.get("/filtered-employees", (req, res) => {
-  db.query(
+router.get("/filtered-employees", async (req, res) => {
+  await db.query(
     `SELECT * FROM Employees WHERE email = "${req.body.email}"`,
     (err, result) => {
       if (err) {
