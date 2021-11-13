@@ -14,7 +14,7 @@ const db = mysql.createConnection(db_config);
 db.connect((err) => {
   if (err) {
     console.log(err);
-    db = reconnect(db);
+    reconnect(db);
     return;
   } else {
     console.log("database connected");
