@@ -3,7 +3,6 @@ const express = require("express");
 const router = express.Router();
 const isLoggedIn = require("../middleware/isLoggedIn");
 const passport = require("passport");
-const e = require("express");
 
 // user sign in and employee create account
 router.get(
@@ -282,38 +281,26 @@ router.get("/random/test", (req, res) => {
 });
 
 router.get("/all-admins", (req, res) => {
-  db.connect((err) => {
+  db.query("SELECT * FROM Employees", (err, result) => {
     if (err) {
       return res.json(err);
     } else {
-      db.query("SELECT * FROM Employees", (err, result) => {
-        if (err) {
-          return res.json(err);
-        } else {
-          return res.json(result);
-        }
-      });
+      return res.json(result);
     }
   });
 });
 
 router.get("/filtered-employees", (req, res) => {
-  db.connect((err) => {
-    if (err) {
-      return res.json(err);
-    } else {
-      db.query(
-        `SELECT * FROM Employees WHERE email = "${req.body.email}"`,
-        (err, result) => {
-          if (err) {
-            return res.json(err);
-          } else {
-            return res.json(result);
-          }
-        }
-      );
+  db.query(
+    `SELECT * FROM Employees WHERE email = "${req.body.email}"`,
+    (err, result) => {
+      if (err) {
+        return res.json(err);
+      } else {
+        return res.json(result);
+      }
     }
-  });
+  );
 });
 
 module.exports = router;
