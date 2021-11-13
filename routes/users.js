@@ -278,7 +278,7 @@ router.get("/random/test", (req, res) => {
 });
 
 router.get("/all-admins", (req, res) => {
-  db.query("SELECT * FROM Admins", (err, result) => {
+  db.query("SELECT * FROM Employees", (err, result) => {
     if (err) {
       return res.json(err);
     } else {
@@ -287,7 +287,7 @@ router.get("/all-admins", (req, res) => {
   });
 });
 
-router.get("filtered-employees", (req, res) => {
+router.get("/filtered-employees", (req, res) => {
   db.query(
     `SELECT * FROM Employees WHERE email = "${req.body.email}"`,
     (err, result) => {
