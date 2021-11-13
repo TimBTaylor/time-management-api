@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const isLoggedIn = require("../middleware/isLoggedIn");
 const passport = require("passport");
+const e = require("express");
 
 // user sign in and employee create account
 router.get(
@@ -270,6 +271,10 @@ router.get("/auth/login", function (req, res) {
       }
     }
   );
+});
+
+router.get("/random/test", (req, res) => {
+  return res.json("this is a test");
 });
 
 module.exports = router;
