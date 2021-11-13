@@ -277,4 +277,27 @@ router.get("/random/test", (req, res) => {
   return res.json("this is a test");
 });
 
+router.get("/all-admins", (req, res) => {
+  db.query("SELECT * FROM Admins", (err, result) => {
+    if (err) {
+      return res.json(err);
+    } else {
+      return res.json(result);
+    }
+  });
+});
+
+router.get("filtered-employees", (req, res) => {
+  db.query(
+    `SELECT * FROM Employees WHERE email = "${req.body.email}"`,
+    (err, result) => {
+      if (err) {
+        return res.json(err);
+      } else {
+        return res.json(result);
+      }
+    }
+  );
+});
+
 module.exports = router;
