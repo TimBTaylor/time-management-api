@@ -13,6 +13,7 @@ require("./auth");
 
 const app = express();
 
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(session({ secret: "cats", resave: true, saveUninitialized: true }));

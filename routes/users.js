@@ -220,7 +220,7 @@ router.get("/logout", (req, res) => {
 
 //new routes
 
-router.get("/auth/login", async (req, res) => {
+router.post("/auth/login", async (req, res) => {
   // retieves current user from database
   try {
     await db.query(
@@ -290,7 +290,8 @@ router.get("/all-admins", (req, res) => {
   });
 });
 
-router.get("/filtered-employees", async (req, res) => {
+router.post("/filtered-employees", async (req, res) => {
+  console.log(req.body);
   await db.query(
     `SELECT * FROM Employees WHERE email = "${req.body.email}"`,
     (err, result) => {
