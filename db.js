@@ -1,7 +1,7 @@
 require("dotenv").config();
 const mysql = require("mysql");
 
-const db_config = {
+var db_config = {
   host: process.env.DATABASE_HOSTNAME,
   port: 3306,
   user: process.env.DATABASE_USER,
@@ -23,7 +23,7 @@ db.connect((err) => {
 
 function reconnect(db) {
   if (db) db.end();
-  const connection = mysql.createConnection(db_config);
+  var connection = mysql.createConnection(db_config);
 
   connection.connect(function (err) {
     if (err) {
