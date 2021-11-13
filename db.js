@@ -9,9 +9,9 @@ var db_config = {
   database: process.env.DATABASE_NAME,
 };
 
-const db = mysql.createConnection(db_config);
+const db = mysql.createPool(db_config);
 
-db.connect((err) => {
+db.getConnection((err) => {
   if (err) {
     console.log(err);
     reconnect(db);
