@@ -197,10 +197,10 @@ router.put("/update-admin-status", (req, res) => {
 });
 
 //delete account
-router.delete("/delete-account", (req, res) => {
+router.delete("/delete-account", async (req, res) => {
   const email = req.body.email;
   const accountType = req.body.accountType;
-  db.query(
+  await db.query(
     `DELETE FROM ${accountType} WHERE email = "${email}"`,
     (err, result) => {
       if (err) {
