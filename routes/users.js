@@ -282,26 +282,38 @@ router.get("/random/test", (req, res) => {
 });
 
 router.get("/all-admins", (req, res) => {
-  db.query("SELECT * FROM Employees", (err, result) => {
+  db.connect((err) => {
     if (err) {
       return res.json(err);
     } else {
-      return res.json(result);
+      db.query("SELECT * FROM Employees", (err, result) => {
+        if (err) {
+          return res.json(err);
+        } else {
+          return res.json(result);
+        }
+      });
     }
   });
 });
 
 router.get("/filtered-employees", (req, res) => {
-  db.query(
-    `SELECT * FROM Employees WHERE email = "${req.body.email}"`,
-    (err, result) => {
-      if (err) {
-        return res.json(err);
-      } else {
-        return res.json(result);
-      }
+  db.connect((err) => {
+    if (err) {
+      return res.json(err);
+    } else {
+      db.query(
+        `SELECT * FROM Employees WHERE email = "${req.body.email}"`,
+        (err, result) => {
+          if (err) {
+            return res.json(err);
+          } else {
+            return res.json(result);
+          }
+        }
+      );
     }
-  );
+  });
 });
 
 module.exports = router;
