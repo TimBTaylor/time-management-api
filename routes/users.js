@@ -60,7 +60,7 @@ router.post("/auth/login", async (req, res) => {
 });
 
 // create admin account
-router.get("/auth/create-admin", (req, res) => {
+router.post("/auth/create-admin", (req, res) => {
   // retrieves users from admins and employee table where email is the current users email
   db.query(
     `SELECT * FROM Admins WHERE email = "${req.body.email}" UNION ALL SELECT * FROM Employees WHERE email = "${req.body.email}"`,
