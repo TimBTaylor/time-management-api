@@ -80,7 +80,7 @@ router.post("/auth/create-admin", (req, res) => {
         }
         // checks if current email is already registered
         if (isUser) {
-          return res.status(201).json({ isUser, isAdmin, email });
+          return res.status(200).json({ isUser, isAdmin, email });
         } else {
           const todayDate = new Date().toISOString().slice(0, 10);
           // inserts new users information into Admins database
