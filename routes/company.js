@@ -10,7 +10,7 @@ router.post("/new-company", (req, res) => {
   const todayDate = new Date().toISOString().slice(0, 10);
   db.query(
     "INSERT INTO Companies (company_name, date, admin_email, company_number) VALUES (?, ?, ?, ?)",
-    [companyName, adminEmail, todayDate, companyNumber],
+    [companyName, todayDate, adminEmail, companyNumber],
     (err, result) => {
       if (err) {
         return res.status(500).json(err.sqlMessage);
