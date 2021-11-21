@@ -40,7 +40,7 @@ router.delete("/delete-job", (req, res) => {
 });
 
 //get all jobs for a company
-router.get("/all-company-jobs", (req, res) => {
+router.post("/all-company-jobs", (req, res) => {
   const companyNumber = req.body.companyNumber;
   db.query(
     `SELECT * FROM Jobs WHERE company_number = ${companyNumber}`,
