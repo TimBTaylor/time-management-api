@@ -131,12 +131,12 @@ router.post("/weekly-time", (req, res) => {
         return res.status(500).json(err.sqlMessage);
       } else {
         week.map((date) => {
-          let timeEntry = result.filter((entry) => {
-            return entry.date === date;
+          result.map((entry) => {
+            if (entry.date === date) {
+              filterdTimeEntries.push(entry);
+            }
           });
-          return filterdTimeEntries.push(timeEntry);
         });
-
         return res.status(200).json(filterdTimeEntries);
       }
     }
