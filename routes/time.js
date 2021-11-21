@@ -8,12 +8,13 @@ router.post("/new-time-entry", (req, res) => {
   const userId = req.body.userId;
   const jobName = req.body.jobName;
   const hours = req.body.hours;
+  const minutes = req.body.minutes;
   const notes = req.body.notes;
   const companyNumber = req.body.companyNumber;
   const todayDate = new Date().toISOString().slice(0, 10);
   db.query(
-    `INSERT INTO Time_Entries (admin_id, user_id, job_name, hours, notes, date, company_number) VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    [adminId, userId, jobName, hours, notes, todayDate, companyNumber],
+    `INSERT INTO Time_Entries (admin_id, user_id, job_name, hours, minutes, notes, date, company_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    [adminId, userId, jobName, hours, minutes, notes, todayDate, companyNumber],
     (err, result) => {
       if (err) {
         return res.status(500).json(err.sqlMessage);
@@ -105,6 +106,38 @@ router.get("/all-time-entries-company", (req, res) => {
           return entry;
         });
         return res.status(200).json(simplifiedTimeEntries);
+      }
+    }
+  );
+});
+
+//weekly time entries
+router.post("/weekly-time", (req, res) => {
+  let curr = new Date();
+  let week = [];
+
+  for (let i = 0; i <= 6; i++) {
+    let first = curr.getDate() - curr.getDay() + i;
+    let day = new Date(curr.setDate(first)).toISOString().slice(0, 10);
+    week.push(day);
+  }
+  const id = req.body.userID;
+  const typeOfId = req.body.typeOfId;
+  let filterdTimeEntries = [];
+  db.query(
+    `SELECT * FROM Time_Entries WHERE ${typeOfId} = ${id}`,
+    (err, result) => {
+      if (err) {
+        return res.status(500).json(err.sqlMessage);
+      } else {
+        week.map((date) => {
+          let timeEntry = result.filter((entry) => {
+            return entry.date === date;
+          });
+          return filterdTimeEntries.push(timeEntry);
+        });
+
+        return res.status(200).json(filterdTimeEntries);
       }
     }
   );
