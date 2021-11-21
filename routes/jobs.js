@@ -1,5 +1,6 @@
 const db = require("../db");
 const express = require("express");
+const { route } = require("./time");
 const router = express.Router();
 
 // create new job
@@ -33,6 +34,21 @@ router.delete("/delete-job", (req, res) => {
         return res.status(500).json(err.sqlMessage);
       } else {
         return res.status(200).json("Job deleted");
+      }
+    }
+  );
+});
+
+//get all jobs for a company
+router.get("/all-company-jobs", (req, res) => {
+  const companyNumber = req.body.companyNumber;
+  db.query(
+    `SELECT * FROM Jobs WHERE company_number = ${companyNumber}`,
+    (err, result) => {
+      if (err) {
+        return res.status(500).json(err.sqlMessage);
+      } else {
+        return res.status(200).json(result);
       }
     }
   );
