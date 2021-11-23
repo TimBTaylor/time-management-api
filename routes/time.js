@@ -11,10 +11,10 @@ router.post("/new-time-entry", (req, res) => {
   const minutes = req.body.minutes;
   const notes = req.body.notes;
   const companyNumber = req.body.companyNumber;
-  const todayDate = new Date().toISOString().slice(0, 10);
+  const date = req.body.date;
   db.query(
     `INSERT INTO Time_Entries (admin_id, user_id, job_name, hours, minutes, notes, date, company_number) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [adminId, userId, jobName, hours, minutes, notes, todayDate, companyNumber],
+    [adminId, userId, jobName, hours, minutes, notes, date, companyNumber],
     (err, result) => {
       if (err) {
         return res.status(500).json(err.sqlMessage);
