@@ -50,10 +50,10 @@ router.delete("/delete-time-entry", (req, res) => {
 });
 
 // all time entrys for a user
-router.get("/all-time-entries-user", (req, res) => {
+router.get("/:id/:typeOfId/all-time-entries-user", (req, res) => {
   // the userID in this request can be an employee's or admin's
-  const id = req.body.userID;
-  const typeOfId = req.body.typeOfId;
+  const id = req.params.id;
+  const typeOfId = req.params.typeOfId;
   db.query(
     `SELECT * FROM Time_Entries WHERE ${typeOfId} = ${id}`,
     (err, result) => {
