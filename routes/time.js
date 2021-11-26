@@ -67,8 +67,8 @@ router.get("/:id/:typeOfId/all-time-entries-user", (req, res) => {
 });
 
 // all time entrys for a company
-router.get("/all-time-entries-company", (req, res) => {
-  const companyNumber = req.body.companyNumber;
+router.get("/:companyNumber/all-time-entries-company", (req, res) => {
+  const companyNumber = req.params.companyNumber;
   db.query(
     `SELECT t.job_name, t.hours, t.notes, t.date, e.first_name as employee_first_name, e.last_name as employee_last_name, a.first_name as admin_first_name, a.last_name as admin_last_name FROM Time_Entries as t 
     LEFT JOIN Employees as e
