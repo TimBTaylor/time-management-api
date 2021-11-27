@@ -70,13 +70,10 @@ router.get("/:id/:typeOfId/all-time-entries-user", (req, res) => {
 router.get("/:companyNumber/all-time-entries-company", (req, res) => {
   const companyNumber = req.params.companyNumber;
   db.query(
-    `SELECT t.job_name, t.hours, t.notes, t.date, e.first_name as employee_first_name, e.last_name as employee_last_name, a.first_name as admin_first_name, a.last_name as admin_last_name FROM Time_Entries as t 
-    LEFT JOIN Employees as e
-    ON e.id = t.user_id
-    LEFT JOIN Admins as a
-    ON a.id = t.user_id
-    WHERE t.company_number = ${companyNumber}
-    ORDER BY t.date`,
+    `SELECT t.date, t.job_name, t.hours, t.minutes, t.notes, t.id as time_entry_id, e.first_name, e.last_name
+    FROM Time_Entries as t
+    INNER JOIN Employees AS e ON t.user_id = e.id
+    WHERE e.company_number = ${companyNumber}`,
     (err, result) => {
       if (err) {
         return res.status(500).json(err.sqlMessage);
@@ -88,6 +85,7 @@ router.get("/:companyNumber/all-time-entries-company", (req, res) => {
             simplifiedTimeEntries.push({
               jobName: entry.job_name,
               hours: entry.hours,
+              minutes: entry.minutes,
               notes: entry.notes,
               date: entry.date,
               fistName: entry.employee_first_name,
@@ -98,6 +96,7 @@ router.get("/:companyNumber/all-time-entries-company", (req, res) => {
               jobName: entry.job_name,
               hours: entry.hours,
               notes: entry.notes,
+              minutes: entry.minutes,
               date: entry.date,
               fistName: entry.admin_first_name,
               lastName: entry.admin_last_name,
@@ -105,7 +104,8 @@ router.get("/:companyNumber/all-time-entries-company", (req, res) => {
           }
           return entry;
         });
-        return res.status(200).json(simplifiedTimeEntries);
+        console.log(result);
+        return res.status(200).json(result);
       }
     }
   );
