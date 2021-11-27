@@ -70,7 +70,7 @@ router.get("/:id/:typeOfId/all-time-entries-user", (req, res) => {
 router.get("/:companyNumber/all-time-entries-company", (req, res) => {
   const companyNumber = req.params.companyNumber;
   db.query(
-    `SELECT t.date, t.job_name, t.hours, t.minutes, t.notes, t.id as time_entry_id, e.first_name, e.last_name
+    `SELECT t.date, t.job_name, t.hours, t.minutes, t.notes, t.id as time_entry_id, e.first_name, e.last_name, e.id
     FROM Time_Entries as t
     INNER JOIN Employees AS e ON t.user_id = e.id
     WHERE e.company_number = ${companyNumber}`,
