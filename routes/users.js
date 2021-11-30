@@ -1,5 +1,6 @@
 const db = require("../db");
 const express = require("express");
+const { response } = require("express");
 const router = express.Router();
 
 // user sign in and employee create account
@@ -134,6 +135,10 @@ router.put("/update-company", (req, res) => {
         return res.status(500).json(err.sqlMessage);
       } else {
         if (result.length > 0) {
+          let companyInfo = {
+            companyNumber: result[0].company_number,
+            companyName: result[0].company_name,
+          };
           // if a valid company then updates users company
           db.query(
             `UPDATE ${tableName} SET company_number = ${newCompanyNumber} WHERE email = "${email}"`,
@@ -141,7 +146,7 @@ router.put("/update-company", (req, res) => {
               if (err) {
                 return res.status(500).json(err.sqlMessage);
               } else {
-                return res.status(200).json("Users company updated");
+                return res.status(200).json(companyInfo);
               }
             }
           );
