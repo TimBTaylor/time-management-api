@@ -15,7 +15,7 @@ router.post("/auth/login", async (req, res) => {
         } else {
           if (result.length > 0) {
             //returning the current user
-            return res.json(result[0]);
+            return res.status(200).json(result[0]);
           } else {
             const todayDate = new Date().toISOString().slice(0, 10);
             // inserts new employee
