@@ -78,33 +78,6 @@ router.get("/:companyNumber/all-time-entries-company", (req, res) => {
       if (err) {
         return res.status(500).json(err.sqlMessage);
       } else {
-        let simplifiedTimeEntries = [];
-        result.map((entry) => {
-          // if entry it by an employee
-          if (entry.employee_first_name !== null) {
-            simplifiedTimeEntries.push({
-              jobName: entry.job_name,
-              hours: entry.hours,
-              minutes: entry.minutes,
-              notes: entry.notes,
-              date: entry.date,
-              fistName: entry.employee_first_name,
-              lastName: entry.employee_last_name,
-            });
-          } else {
-            simplifiedTimeEntries.push({
-              jobName: entry.job_name,
-              hours: entry.hours,
-              notes: entry.notes,
-              minutes: entry.minutes,
-              date: entry.date,
-              fistName: entry.admin_first_name,
-              lastName: entry.admin_last_name,
-            });
-          }
-          return entry;
-        });
-        console.log(result);
         return res.status(200).json(result);
       }
     }
